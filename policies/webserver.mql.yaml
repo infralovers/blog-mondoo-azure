@@ -1,0 +1,52 @@
+policies:
+  - uid: webserver
+    name: Webserver Baseline
+    version: 1.0.0
+    authors:
+      - name: Infralovers GmbH
+        email: team@infralovers.com
+    docs:
+      desc: Test suite for Infralovers blog post
+    tags:
+      mondoo.com/category: security
+      mondoo.com/platform: linux,ubuntu,debian
+    groups:
+      - title: SSH
+        filters: |
+          asset.family.contains("linux")
+        checks:
+          - uid: ssh-01
+            title: Ensure SSH port is listening
+            mql: ports.listening.any( port == 22 )
+      - title: Webserver
+        filters: |
+          asset.family.contains("linux")
+        checks:
+          - uid: webserver-01
+            title: Ensure webserver ports are listening
+            mql: |
+              ports.listening.any( port == 80 )
+              ports.listening.any( port == 3000 )
+      - title: Packages
+        filters: |
+          asset.family.contains("linux")
+        checks:
+          - uid: package-01
+            title: Ensure nginx is installed
+            mql: package('nginx').installed == true
+          - uid: package-02
+            title: Ensure nodejs is installed
+            mql: package('nodejs').installed == true
+          - uid: package-03
+            title: Ensure npm is installed
+            mql: package('npm').installed == true
+      - title: Files
+        filters: |
+          asset.family.contains("linux")
+        checks:
+          - uid: file-01
+            title: Ensure nginx config is present
+            mql: file('/etc/nginx/sites-available/default').exists == true
+          - uid: file-02
+            title: Ensure application file is present
+            mql: file('/home/adminuser/myapp/index.js').exists == true
